@@ -1,0 +1,134 @@
+@startuml
+
+class Mastermind{
+{static} + main()
+}
+
+class Game{
++ {static} isResumed() : boolean
++ {static} start()
+}
+
+class Console{
++ {static} printMastermindHeader()
++ {static} printColorOf(Position position)
++ {static} printAttempt(int i)
++ {static} introProposingCombination() : String
++ {static} printWrongLength()
++ {static} printWrongColors()
++ {static} printWrongColorSingleness()
++ {static} print(ProposedCombination proposedCombination)
++ {static} printArrow()
++ {static} printBlacksWhites(int nBlacks, int nWhites)
++ {static} printPrecedingResults(...)
++ {static} printYouHaveWon()
++ {static} printYouHaveLost()
++ {static} printResume() : String
+}
+
+class Combination{
++ {static} int POSITIONS_NUMBER = 4
++ Combination()
++ Combination(String legalString)
++ toString()
++ getColorOfItsPosition(int i) : Color
+}
+
+class Position{
++ Position(Color color)
++ Position(char character)
++ getColor() : Color
+}
+
+enum Color{
+RED
+BLUE
+YELLOW
+GREEN
+ORANGE
+PURPLE
++ {static} char[] characters = {'r', 'b', 'y', 'g', 'o', 'p'}
++ {static} String charactersAsString = "rbygop"
++ {static} numberOfColorsAvailables() : int
++ toChar() : char
++ {static} getRandomColor() : Color
+}
+
+Position o--> Color
+
+Combination *--> "4" Position
+' Combination --> Color
+
+Combination <|-- SecretCombination
+Combination <|-- ProposedCombination
+
+class SecretCombination{
++ SecretCombination()
+}
+
+' SecretCombination --> Color
+SecretCombination --> Checker
+SecretCombination *--> "4" Position
+
+class ProposedCombination{
++ ProposedCombination(String legalString)
+}
+
+class Result{
+' + {static} boolean isWinner = false
++ Result()
++ Result(SecretCombination sCombination, ProposedCombination pCombination)
++ numberOfBlacks() : int
++ numberOfWhites() : int
++ isWinner() : boolean
++ {static} setNotToWinner()
+}
+
+class Success{
+}
+
+Result *--> "1..4" Success
+Result --> SecretCombination
+Result --> ProposedCombination
+Result --> Combination
+Result --> Black
+Result --> White
+
+Success <|-- Black
+Success <|-- White
+
+class Attempt{
++ {static} realizeAll(SecretCombination secretCombination)
+' + {static} realize(SecretCombination secretCombination)
+}
+
+class Checker{
++ {static} isWrong(String _proposingCombination) : boolean
++ {static} isWrongLength() : boolean
++ {static} isWrongColors() : boolean
++ {static} isWrongColorSingleness() : boolean
++ {static} isWrongColorSingleness(String combination) : boolean
+}
+
+Mastermind --> Game
+' Mastermind --> Console
+' Mastermind --> SecretCombination
+
+Game *--> "0..10" Attempt
+Game --> Console
+Game *--> SecretCombination
+
+' Attempt --> Console
+' Attempt --> Checker
+Attempt *--> "0..10" ProposedCombination
+' Attempt --> SecretCombination
+Attempt *--> "0..10" Result
+
+' Checker --> Console
+' Checker --> Color
+
+' Console --> Position
+' Console --> ProposedCombination
+' Console --> Result
+
+@enduml
